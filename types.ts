@@ -35,6 +35,11 @@ export interface Genre {
   count: number;
 }
 
+export interface Episode {
+  mal_id: number;
+  title: string;
+}
+
 export interface Pagination {
   last_visible_page: number;
   has_next_page: boolean;

@@ -61,7 +61,7 @@ const SearchPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-primary mb-8">{displayQuery}</h1>
              {animeList.length > 0 ? (
                 <>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
                         {animeList.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
                     </div>
                     {pagination && (

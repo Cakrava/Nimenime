@@ -1,14 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import * as api from '../services/api';
-import { AnimeFull } from '../types';
+import { AnimeFull, Episode } from '../types';
 import Spinner from '../components/Spinner';
 import { PlayIcon, HeartIcon } from '../components/Icons';
 
 const AnimeDetailPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [anime, setAnime] = useState<AnimeFull | null>(null);
+    const [episodes, setEpisodes] = useState<Episode[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -17,8 +17,12 @@ const AnimeDetailPage: React.FC = () => {
             if (!id) return;
             try {
                 setLoading(true);
-                const response = await api.getAnimeById(id);
-                setAnime(response.data);
+                const [animeResponse, episodesResponse] = await Promise.all([
+                    api.getAnimeById(id),
+                    api.getAnimeEpisodes(id)
+                ]);
+                setAnime(animeResponse.data);
+                setEpisodes(episodesResponse.data);
             } catch (err: any) {
                 setError(err.message || "Failed to load anime details.");
             } finally {
@@ -48,11 +52,12 @@ const AnimeDetailPage: React.FC = () => {
                 </div>
                 <div className="md:w-2/3">
                     <h1 className="text-4xl font-bold text-primary mb-2">{anime.title}</h1>
-                    <div className="flex items-center gap-4 text-gray-400 mb-4">
+                    <div className="flex items-center gap-4 text-gray-400 mb-4 flex-wrap">
                         <span>⭐ {anime.score}</span>
                         <span>•</span>
                         <span>{anime.status}</span>
-                        {anime.episodes && <><span>•</span><span>{anime.episodes} Episodes</span></>}
+                        <span>•</span>
+                        <span>Episodes: {episodes.length} / {anime.episodes || '?'}</span>
                     </div>
                     <div className="flex flex-wrap gap-2 mb-6">
                         {anime.genres.map(g => (

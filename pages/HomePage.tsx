@@ -36,7 +36,7 @@ const HeroSection: React.FC<{ anime: Anime }> = ({ anime }) => (
 const AnimeGrid: React.FC<{ title: string; animes: Anime[] }> = ({ title, animes }) => (
     <section className="my-12">
         <h2 className="text-2xl font-bold text-primary mb-6">{title}</h2>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
             {animes.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
         </div>
     </section>
@@ -83,7 +83,7 @@ const HomePage: React.FC = () => {
                     mostFavoritedRes,
                 ] = await Promise.all([
                     api.getTopAnime('bypopularity', 6),
-                    api.getSeasonNow(12),
+                    api.getSeasonNow(16),
                     api.getAnimeList({ status: 'complete', order_by: 'end_date', sort: 'desc', limit: 20 }),
                     api.getTopAnime('favorite', 5),
                 ]);
@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
                 {completedByDate.length > 0 && (
                     <section className="my-12">
                         <h2 className="text-2xl font-bold text-primary mb-6">Recently Completed</h2>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
                             {completedByDate.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
                         </div>
                         <div className="text-center mt-8">

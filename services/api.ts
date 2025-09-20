@@ -1,5 +1,5 @@
 import { API_BASE_URL } from '../constants';
-import { Anime, AnimeFull, Genre, User, ApiResponse } from '../types';
+import { Anime, AnimeFull, Genre, User, ApiResponse, Episode } from '../types';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('jwt_token');
@@ -40,6 +40,7 @@ export const getSeasonNow = (limit: number) => apiFetch<ApiResponse<Anime[]>>(`/
 export const getCompletedAnime = (limit: number) => apiFetch<ApiResponse<Anime[]>>(`/anime?status=complete&order_by=score&sort=desc&limit=${limit}`);
 export const getAnimeById = (id: string) => apiFetch<ApiResponse<AnimeFull>>(`/anime/${id}/full`);
 export const getGenres = () => apiFetch<ApiResponse<Genre[]>>('/genres/anime');
+export const getAnimeEpisodes = (id: string) => apiFetch<ApiResponse<Episode[]>>(`/anime/${id}/episodes`);
 export const getAnimeList = (params: Record<string, string | number>) => {
     const query = new URLSearchParams(params as Record<string, string>).toString();
     return apiFetch<ApiResponse<Anime[]>>(`/anime?${query}`);

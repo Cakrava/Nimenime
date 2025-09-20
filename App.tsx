@@ -37,7 +37,7 @@ const MainLayout: React.FC = () => {
     return (
         <div className="min-h-screen bg-background font-sans">
             {isFullLayoutPage && <Sidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />}
-            <div className={`flex flex-col min-h-screen transition-all duration-300 ease-in-out ${isFullLayoutPage && isSidebarOpen ? 'lg:pl-64' : ''}`}>
+            <div className="flex flex-col min-h-screen">
                 {isFullLayoutPage && <Header onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />}
                 <main className="flex-1">
                     <Routes>
@@ -138,18 +138,18 @@ const Sidebar: React.FC<{ isOpen: boolean; setIsOpen: (isOpen: boolean) => void 
 
 
     const NavItem: React.FC<{ to: string, children: React.ReactNode }> = ({ to, children }) => (
-        <NavLink to={to} onClick={() => window.innerWidth < 1024 && setIsOpen(false)} className={({isActive}) => `block px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-background font-bold' : 'hover:bg-gray-700'}`}>
+        <NavLink to={to} onClick={() => setIsOpen(false)} className={({isActive}) => `block px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-background font-bold' : 'hover:bg-gray-700'}`}>
             {children}
         </NavLink>
     );
     
     return (
         <>
-            <div className={`fixed inset-0 bg-black/50 z-40 transition-opacity lg:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)}></div>
+            <div className={`fixed inset-0 bg-black/80 z-40 transition-opacity ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)}></div>
             <aside className={`fixed z-50 h-full bg-card/90 backdrop-blur-lg w-64 flex-shrink-0 flex flex-col p-4 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex justify-between items-center mb-8">
                     <Link to="/" className="text-2xl font-bold text-primary">Nimenime</Link>
-                    <button onClick={() => setIsOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
+                    <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">
                         <CloseIcon className="w-6 h-6" />
                     </button>
                 </div>
@@ -167,7 +167,7 @@ const Sidebar: React.FC<{ isOpen: boolean; setIsOpen: (isOpen: boolean) => void 
                              <Link 
                                 key={genre.mal_id} 
                                 to={`/genre/${genre.mal_id}/${genre.name.toLowerCase()}`}
-                                onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
+                                onClick={() => setIsOpen(false)}
                                 className={`block py-1 hover:underline ${accentColors[index % accentColors.length]}`}
                             >
                                 {genre.name}

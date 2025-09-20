@@ -1,31 +1,38 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import * as api from '../services/api';
-import { AnimeFull } from '../types';
+import { AnimeFull, Episode } from '../types';
 import Spinner from '../components/Spinner';
 
 const WatchPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [anime, setAnime] = useState<AnimeFull | null>(null);
+    const [episodes, setEpisodes] = useState<Episode[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState(1);
     
     useEffect(() => {
-        const fetchAnime = async () => {
+        const fetchWatchData = async () => {
             if (!id) return;
             try {
                 setLoading(true);
-                const response = await api.getAnimeById(id);
-                setAnime(response.data);
+                const [animeRes, episodesRes] = await Promise.all([
+                    api.getAnimeById(id),
+                    api.getAnimeEpisodes(id)
+                ]);
+                setAnime(animeRes.data);
+                setEpisodes(episodesRes.data);
+                if (episodesRes.data.length > 0) {
+                    setCurrentEpisode(episodesRes.data[0].mal_id);
+                }
             } catch (err: any) {
-                setError(err.message || "Failed to load anime details.");
+                setError(err.message || "Failed to load anime data.");
             } finally {
                 setLoading(false);
             }
         };
-        fetchAnime();
+        fetchWatchData();
     }, [id]);
 
     if (loading) {
@@ -40,23 +47,25 @@ const WatchPage: React.FC = () => {
         return <div className="text-center p-8">Anime not found.</div>;
     }
 
-    const totalEpisodes = anime.episodes || anime.stream_links?.length || 24; // Fallback
-
     return (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 h-screen max-h-screen overflow-hidden">
             {/* Left: Episode Picker */}
             <div className="lg:col-span-2 bg-card rounded-lg p-4 overflow-y-auto">
                 <h3 className="text-lg font-bold text-primary mb-4">Episodes</h3>
                 <div className="flex flex-col gap-2">
-                    {Array.from({ length: totalEpisodes }, (_, i) => i + 1).map(ep => (
-                        <button 
-                            key={ep}
-                            onClick={() => setCurrentEpisode(ep)}
-                            className={`w-full text-left p-3 rounded ${currentEpisode === ep ? 'bg-primary text-background' : 'bg-gray-700 hover:bg-gray-600'}`}
-                        >
-                            Episode {ep}
-                        </button>
-                    ))}
+                    {episodes.length > 0 ? (
+                        episodes.map(ep => (
+                            <button 
+                                key={ep.mal_id}
+                                onClick={() => setCurrentEpisode(ep.mal_id)}
+                                className={`w-full text-left p-3 rounded ${currentEpisode === ep.mal_id ? 'bg-primary text-background' : 'bg-gray-700 hover:bg-gray-600'}`}
+                            >
+                                Episode {ep.mal_id}
+                            </button>
+                        ))
+                    ) : (
+                         <p className="text-gray-400 text-sm">No episodes available yet.</p>
+                    )}
                 </div>
             </div>
 
