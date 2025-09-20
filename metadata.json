@@ -1,0 +1,5 @@
+{
+  "name": "Nimenime - Anime Streaming",
+  "description": "A dark-themed anime streaming web application with a rich user interface, integrating with the AnimeVerse backend for a comprehensive anime library, user profiles, progress tracking, and more.",
+  "requestFramePermissions": []
+}

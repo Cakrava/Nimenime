@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nimenime - Anime Streaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'background': '#242428',
+              'primary': '#ffdd94',
+              'text-main': '#ffffff',
+              'accent-1': '#cc766c',
+              'accent-2': '#c3a5cf',
+              'accent-3': '#7cccbb',
+              'accent-4': '#c4a39d',
+              'card': 'rgba(36,36,40,0.9)',
+            },
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.1"
+  }
+}
+</script>
+</head>
+  <body class="bg-background text-text-main">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
