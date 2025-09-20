@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as api from '../services/api';
-import { Anime, Genre } from '../types';
+import { Anime } from '../types';
 import Spinner from '../components/Spinner';
 import AnimeCard from '../components/AnimeCard';
 import { PlayIcon, HeartIcon } from '../components/Icons';
@@ -42,20 +42,6 @@ const AnimeGrid: React.FC<{ title: string; animes: Anime[] }> = ({ title, animes
     </section>
 );
 
-
-const GenresSection: React.FC<{ genres: Genre[] }> = ({ genres }) => (
-    <section className="bg-card p-6 rounded-lg">
-        <h3 className="text-xl font-bold text-primary mb-4">Genres</h3>
-        <div className="flex flex-wrap gap-2">
-            {genres.map(genre => (
-                <Link key={genre.mal_id} to={`/genre/${genre.mal_id}/${genre.name.toLowerCase()}`} className="bg-gray-700 text-gray-200 px-3 py-1 rounded-full text-sm hover:bg-primary hover:text-background transition-colors">
-                    {genre.name}
-                </Link>
-            ))}
-        </div>
-    </section>
-);
-
 const AnimeListItem: React.FC<{ anime: Anime }> = ({ anime }) => (
     <Link to={`/anime/${anime.mal_id}`} className="flex items-start gap-4 p-2 rounded-lg hover:bg-gray-700/50 transition-colors">
         <img src={anime.images.jpg.image_url} alt={anime.title} className="w-12 h-16 object-cover rounded flex-shrink-0" />
@@ -70,7 +56,7 @@ const AnimeListItem: React.FC<{ anime: Anime }> = ({ anime }) => (
 );
 
 const AnimeSidebarList: React.FC<{ title: string; animes: Anime[] }> = ({ title, animes }) => (
-    <section className="bg-card p-4 rounded-lg mb-8">
+    <section className="bg-card p-4 rounded-lg h-full">
         <h3 className="text-xl font-bold text-primary mb-4">{title}</h3>
         <div className="flex flex-col gap-3">
             {animes.map(anime => <AnimeListItem key={anime.mal_id} anime={anime} />)}
@@ -82,11 +68,8 @@ const AnimeSidebarList: React.FC<{ title: string; animes: Anime[] }> = ({ title,
 const HomePage: React.FC = () => {
     const [popular, setPopular] = useState<Anime[]>([]);
     const [seasonNow, setSeasonNow] = useState<Anime[]>([]);
-    const [completed, setCompleted] = useState<Anime[]>([]);
-    const [genres, setGenres] = useState<Genre[]>([]);
+    const [completedByDate, setCompletedByDate] = useState<Anime[]>([]);
     const [mostFavorited, setMostFavorited] = useState<Anime[]>([]);
-    const [topAiring, setTopAiring] = useState<Anime[]>([]);
-    const [latestCompleted, setLatestCompleted] = useState<Anime[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -97,26 +80,17 @@ const HomePage: React.FC = () => {
                     popularRes, 
                     seasonNowRes, 
                     completedRes, 
-                    genresRes,
                     mostFavoritedRes,
-                    topAiringRes,
-                    latestCompletedRes,
                 ] = await Promise.all([
-                    api.getTopAnime('bypopularity', 12),
+                    api.getTopAnime('bypopularity', 6),
                     api.getSeasonNow(12),
-                    api.getCompletedAnime(12),
-                    api.getGenres(),
+                    api.getAnimeList({ status: 'complete', order_by: 'end_date', sort: 'desc', limit: 20 }),
                     api.getTopAnime('favorite', 5),
-                    api.getTopAnime('airing', 5),
-                    api.getAnimeList({ status: 'complete', order_by: 'end_date', sort: 'desc', limit: 5 })
                 ]);
                 setPopular(popularRes.data);
                 setSeasonNow(seasonNowRes.data);
-                setCompleted(completedRes.data);
-                setGenres(genresRes.data);
+                setCompletedByDate(completedRes.data);
                 setMostFavorited(mostFavoritedRes.data);
-                setTopAiring(topAiringRes.data);
-                setLatestCompleted(latestCompletedRes.data);
             } catch (error) {
                 console.error("Failed to fetch homepage data:", error);
             } finally {
@@ -136,18 +110,25 @@ const HomePage: React.FC = () => {
 
             <div className="p-4 md:p-8 lg:p-16">
                 {seasonNow.length > 0 && <AnimeGrid title="Anime Today" animes={seasonNow} />}
-                {completed.length > 0 && <AnimeGrid title="Recently Completed" animes={completed} />}
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 my-12">
-                    <div className="lg:col-span-2">
-                        {mostFavorited.length > 0 && <AnimeSidebarList title="Most Favorited" animes={mostFavorited} />}
-                        {latestCompleted.length > 0 && <AnimeSidebarList title="Latest Completed" animes={latestCompleted} />}
-                        {topAiring.length > 0 && <AnimeSidebarList title="Top Airing" animes={topAiring} />}
-                    </div>
-                    <div>
-                        {genres.length > 0 && <GenresSection genres={genres} />}
-                    </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-12">
+                    {popular.length > 0 && <AnimeSidebarList title="Most Popular" animes={popular} />}
+                    {mostFavorited.length > 0 && <AnimeSidebarList title="Most Favorited" animes={mostFavorited} />}
                 </div>
+
+                {completedByDate.length > 0 && (
+                    <section className="my-12">
+                        <h2 className="text-2xl font-bold text-primary mb-6">Recently Completed</h2>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                            {completedByDate.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
+                        </div>
+                        <div className="text-center mt-8">
+                             <Link to="/list" className="bg-primary text-background font-bold py-3 px-6 rounded-full hover:bg-yellow-300 transition-colors">
+                                View More
+                            </Link>
+                        </div>
+                    </section>
+                )}
             </div>
         </div>
     );

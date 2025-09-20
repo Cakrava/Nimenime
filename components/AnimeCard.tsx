@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Anime } from '../types';
 import { PlayIcon, HeartIcon } from './Icons';
@@ -8,8 +8,37 @@ interface AnimeCardProps {
 }
 
 const AnimeCard: React.FC<AnimeCardProps> = ({ anime }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [popupPosition, setPopupPosition] = useState<'right' | 'left'>('right');
+
+  useLayoutEffect(() => {
+    const checkPosition = () => {
+      if (cardRef.current) {
+        const rect = cardRef.current.getBoundingClientRect();
+        // popup width is w-72 (18rem = 288px). Add some buffer.
+        const popupWidth = 300;
+        if (rect.right + popupWidth > window.innerWidth) {
+          setPopupPosition('left');
+        } else {
+          setPopupPosition('right');
+        }
+      }
+    };
+
+    // A small timeout to let the grid settle, especially during navigation
+    const timer = setTimeout(checkPosition, 50);
+
+    window.addEventListener('resize', checkPosition);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkPosition);
+    };
+  }, []);
+
+
   return (
-    <div className="relative group">
+    <div ref={cardRef} className="relative group">
       <Link 
         to={`/anime/${anime.mal_id}`} 
         className="block aspect-[2/3] rounded-lg overflow-hidden shadow-lg"
@@ -29,9 +58,10 @@ const AnimeCard: React.FC<AnimeCardProps> = ({ anime }) => {
       
       {/* Hover Popup Detail Box */}
       <div 
-        className="absolute left-full top-0 ml-2 w-72 bg-card rounded-lg shadow-2xl p-4 z-20 
+        className={`absolute top-0 w-72 bg-card rounded-lg shadow-2xl p-4 z-20 
                    invisible opacity-0 group-hover:visible group-hover:opacity-100 
-                   transition-all duration-300 transform group-hover:translate-x-0"
+                   transition-all duration-300 transform group-hover:translate-x-0
+                   ${popupPosition === 'right' ? 'left-full ml-2' : 'right-full mr-2'}`}
         style={{ pointerEvents: 'none' }} // Let clicks pass through to the card link
       >
         <h3 className="text-lg font-bold text-primary line-clamp-2">{anime.title}</h3>

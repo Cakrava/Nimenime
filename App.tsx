@@ -28,18 +28,11 @@ const App: React.FC = () => {
 };
 
 const MainLayout: React.FC = () => {
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
     const location = useLocation();
 
     const noLayoutPaths = ['/login', '/watch/'];
     const isFullLayoutPage = !noLayoutPaths.some(path => location.pathname.startsWith(path));
-    
-    // On small screens, start with the sidebar closed.
-    React.useEffect(() => {
-        if (window.innerWidth < 1024) {
-            setSidebarOpen(false);
-        }
-    }, []);
     
     return (
         <div className="min-h-screen bg-background font-sans">
