@@ -90,7 +90,7 @@ const Header: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
     return (
         <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-lg flex items-center justify-between p-4 shadow-md">
             <div className="flex items-center gap-4">
-                <button onClick={onMenuClick} className="text-gray-300 hover:text-primary">
+                <button onClick={onMenuClick} className="text-gray-300 hover:text-primary h-10 w-10 flex items-center justify-center rounded-full hover:bg-gray-700/50 transition-colors">
                     <MenuIcon className="w-6 h-6" />
                 </button>
                 <form onSubmit={handleSearch} className="relative">
@@ -99,7 +99,7 @@ const Header: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
                         placeholder="Search anime..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 rounded-full pl-10 pr-4 py-2 w-40 md:w-64 focus:outline-none focus:ring-2 focus:ring-primary" 
+                        className="bg-gray-800 border border-gray-700 rounded-full pl-10 pr-4 py-2 h-10 w-40 md:w-64 focus:outline-none focus:ring-2 focus:ring-primary" 
                     />
                     <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </form>
@@ -107,7 +107,7 @@ const Header: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
             <div className="relative">
                 {isAuthenticated && user ? (
                     <button onClick={() => setProfileOpen(!isProfileOpen)} className="flex items-center gap-2">
-                        <img src={`https://i.pravatar.cc/40?u=${user.email}`} alt="avatar" className="w-8 h-8 rounded-full" />
+                        <img src={user.avatar} alt="avatar" className="w-8 h-8 rounded-full object-cover" />
                         <span className="hidden md:block">{user.username}</span>
                     </button>
                 ) : (
@@ -129,14 +129,14 @@ const Header: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
 
 const Sidebar: React.FC<{ isOpen: boolean; setIsOpen: (isOpen: boolean) => void }> = ({ isOpen, setIsOpen }) => {
     const NavItem: React.FC<{ to: string, children: React.ReactNode }> = ({ to, children }) => (
-        <NavLink to={to} onClick={() => setIsOpen(false)} className={({isActive}) => `block px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-background font-bold' : 'hover:bg-gray-700'}`}>
+        <NavLink to={to} onClick={() => window.innerWidth < 1024 && setIsOpen(false)} className={({isActive}) => `block px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-background font-bold' : 'hover:bg-gray-700'}`}>
             {children}
         </NavLink>
     );
     
     return (
         <>
-            <div className={`fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)}></div>
+            <div className={`fixed inset-0 bg-black/50 z-40 transition-opacity lg:hidden ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsOpen(false)}></div>
             <aside className={`fixed z-50 h-full bg-card/90 backdrop-blur-lg w-64 flex-shrink-0 flex flex-col p-4 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex justify-between items-center mb-8">
                     <Link to="/" className="text-2xl font-bold text-primary">Nimenime</Link>

@@ -28,10 +28,10 @@ const apiFetch = async <T,>(endpoint: string, options: RequestInit = {}): Promis
 
 // Auth
 export const registerUser = (data: any) => apiFetch('/auth/register', { method: 'POST', body: JSON.stringify(data) });
-export const loginUser = (data: any) => apiFetch<{token: string}>('/auth/login', { method: 'POST', body: JSON.stringify(data) });
+export const loginUser = (data: any) => apiFetch<{user: User, token: string}>('/auth/login', { method: 'POST', body: JSON.stringify(data) });
 
 // User
-export const getUserProfile = () => apiFetch<ApiResponse<User>>('/user/profile');
+export const getUserProfile = () => apiFetch<User>('/user/profile');
 export const getUserFavorites = () => apiFetch<ApiResponse<Anime[]>>('/user/favorites');
 
 // Anime

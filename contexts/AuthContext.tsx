@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect, useContext, useCallback, ReactNode } from 'react';
 import * as api from '../services/api';
 import { User } from '../types';
@@ -26,8 +25,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (localStorage.getItem('jwt_token')) {
       try {
         setIsLoading(true);
-        const { data } = await api.getUserProfile();
-        setUser(data);
+        const userProfile = await api.getUserProfile();
+        setUser(userProfile);
       } catch (err) {
         console.error('Failed to fetch user profile', err);
         localStorage.removeItem('jwt_token');
@@ -48,10 +47,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (credentials: any) => {
     try {
       setError(null);
-      const data = await api.loginUser(credentials);
-      localStorage.setItem('jwt_token', data.token);
-      setToken(data.token);
-      await fetchUserProfile();
+      const response = await api.loginUser(credentials);
+      localStorage.setItem('jwt_token', response.token);
+      setToken(response.token);
+      setUser(response.user);
     } catch (err: any) {
       setError(err.message || 'Login failed');
       throw err;

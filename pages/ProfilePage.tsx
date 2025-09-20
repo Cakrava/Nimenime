@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import * as api from '../services/api';
@@ -95,7 +94,7 @@ const ProfilePage: React.FC = () => {
             <div className="bg-card p-8 rounded-lg">
                 <div className="flex flex-col md:flex-row items-center gap-8">
                     <div className="flex-shrink-0 text-center">
-                        <img src={`https://i.pravatar.cc/150?u=${user.email}`} alt={user.username} className="w-32 h-32 rounded-full border-4 border-primary"/>
+                        <img src={user.avatar} alt={user.username} className="w-32 h-32 rounded-full border-4 border-primary object-cover"/>
                         <p className="mt-4 text-lg font-bold">Level {user.level}</p>
                     </div>
                     <div className="flex-grow w-full">
