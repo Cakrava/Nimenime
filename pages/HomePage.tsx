@@ -56,28 +56,67 @@ const GenresSection: React.FC<{ genres: Genre[] }> = ({ genres }) => (
     </section>
 );
 
+const AnimeListItem: React.FC<{ anime: Anime }> = ({ anime }) => (
+    <Link to={`/anime/${anime.mal_id}`} className="flex items-start gap-4 p-2 rounded-lg hover:bg-gray-700/50 transition-colors">
+        <img src={anime.images.jpg.image_url} alt={anime.title} className="w-12 h-16 object-cover rounded flex-shrink-0" />
+        <div className="flex-1">
+            <h4 className="font-semibold text-sm line-clamp-2 text-white hover:text-primary transition-colors">{anime.title}</h4>
+            <div className="text-xs text-gray-400 flex items-center gap-2 mt-1">
+                <span>⭐ {anime.score || 'N/A'}</span>
+                {anime.genres[0] && <span>• {anime.genres[0].name}</span>}
+            </div>
+        </div>
+    </Link>
+);
+
+const AnimeSidebarList: React.FC<{ title: string; animes: Anime[] }> = ({ title, animes }) => (
+    <section className="bg-card p-4 rounded-lg mb-8">
+        <h3 className="text-xl font-bold text-primary mb-4">{title}</h3>
+        <div className="flex flex-col gap-3">
+            {animes.map(anime => <AnimeListItem key={anime.mal_id} anime={anime} />)}
+        </div>
+    </section>
+);
+
 
 const HomePage: React.FC = () => {
     const [popular, setPopular] = useState<Anime[]>([]);
     const [seasonNow, setSeasonNow] = useState<Anime[]>([]);
     const [completed, setCompleted] = useState<Anime[]>([]);
     const [genres, setGenres] = useState<Genre[]>([]);
+    const [mostFavorited, setMostFavorited] = useState<Anime[]>([]);
+    const [topAiring, setTopAiring] = useState<Anime[]>([]);
+    const [latestCompleted, setLatestCompleted] = useState<Anime[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchHomePageData = async () => {
             try {
                 setLoading(true);
-                const [popularRes, seasonNowRes, completedRes, genresRes] = await Promise.all([
+                const [
+                    popularRes, 
+                    seasonNowRes, 
+                    completedRes, 
+                    genresRes,
+                    mostFavoritedRes,
+                    topAiringRes,
+                    latestCompletedRes,
+                ] = await Promise.all([
                     api.getTopAnime('bypopularity', 10),
                     api.getSeasonNow(10),
                     api.getCompletedAnime(10),
-                    api.getGenres()
+                    api.getGenres(),
+                    api.getTopAnime('favorite', 5),
+                    api.getTopAnime('airing', 5),
+                    api.getAnimeList({ status: 'complete', order_by: 'end_date', sort: 'desc', limit: 5 })
                 ]);
                 setPopular(popularRes.data);
                 setSeasonNow(seasonNowRes.data);
                 setCompleted(completedRes.data);
                 setGenres(genresRes.data);
+                setMostFavorited(mostFavoritedRes.data);
+                setTopAiring(topAiringRes.data);
+                setLatestCompleted(latestCompletedRes.data);
             } catch (error) {
                 console.error("Failed to fetch homepage data:", error);
             } finally {
@@ -101,7 +140,9 @@ const HomePage: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 my-12">
                     <div className="lg:col-span-2">
-                        {/* You can add more lists like Most Favorited here */}
+                        {mostFavorited.length > 0 && <AnimeSidebarList title="Most Favorited" animes={mostFavorited} />}
+                        {latestCompleted.length > 0 && <AnimeSidebarList title="Latest Completed" animes={latestCompleted} />}
+                        {topAiring.length > 0 && <AnimeSidebarList title="Top Airing" animes={topAiring} />}
                     </div>
                     <div>
                         {genres.length > 0 && <GenresSection genres={genres} />}
