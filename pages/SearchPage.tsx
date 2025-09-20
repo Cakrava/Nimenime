@@ -20,7 +20,7 @@ const SearchPage: React.FC = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const params: { [key: string]: string | number } = { page: currentPage, limit: 20 };
+                const params: { [key: string]: string | number } = { page: currentPage, limit: 24 };
                 if (query.length === 1 && /^[a-zA-Z]$/.test(query)) {
                     params['letter'] = query;
                 } else if (query.toLowerCase() !== 'all') {
@@ -61,7 +61,7 @@ const SearchPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-primary mb-8">{displayQuery}</h1>
              {animeList.length > 0 ? (
                 <>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
                         {animeList.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
                     </div>
                     {pagination && (

@@ -17,7 +17,7 @@ const OngoingPage: React.FC = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await api.getAnimeList({ page: currentPage, limit: 20, status: 'airing', order_by: 'score', sort: 'desc' });
+                const response = await api.getAnimeList({ page: currentPage, limit: 24, status: 'airing', order_by: 'score', sort: 'desc' });
                 setAnimeList(response.data);
                  if (response.pagination) {
                     setPagination(response.pagination);
@@ -42,7 +42,7 @@ const OngoingPage: React.FC = () => {
     return (
         <div className="p-4 md:p-8 lg:p-12 animate-fade-in">
             <h1 className="text-3xl font-bold text-primary mb-8">Ongoing Anime</h1>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
                 {animeList.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
             </div>
             {pagination && (

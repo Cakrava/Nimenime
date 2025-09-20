@@ -58,7 +58,7 @@ const ProfilePage: React.FC = () => {
             case 'favorites':
                 if (loading) return <Spinner />;
                 return (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-8">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 mt-8">
                         {favorites.length > 0 ? (
                             favorites.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)
                         ) : (

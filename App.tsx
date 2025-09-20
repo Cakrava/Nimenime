@@ -1,6 +1,8 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { HashRouter, Routes, Route, Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import * as api from './services/api';
+import { Genre } from './types';
 
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
@@ -9,7 +11,6 @@ import AnimeDetailPage from './pages/AnimeDetailPage';
 import WatchPage from './pages/WatchPage';
 import AnimeListPage from './pages/AnimeListPage';
 import OngoingPage from './pages/OngoingPage';
-import GenreListPage from './pages/GenreListPage';
 import GenrePage from './pages/GenrePage';
 import SchedulePage from './pages/SchedulePage';
 import SearchPage from './pages/SearchPage';
@@ -54,7 +55,6 @@ const MainLayout: React.FC = () => {
                         <Route path="/watch/:id" element={<WatchPage />} />
                         <Route path="/list" element={<AnimeListPage />} />
                         <Route path="/ongoing" element={<OngoingPage />} />
-                        <Route path="/genres" element={<GenreListPage />} />
                         <Route path="/genre/:genreId/:genreName" element={<GenrePage />} />
                         <Route path="/schedule" element={<SchedulePage />} />
                         <Route path="/search/:query" element={<SearchPage />} />
@@ -128,6 +128,22 @@ const Header: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
 };
 
 const Sidebar: React.FC<{ isOpen: boolean; setIsOpen: (isOpen: boolean) => void }> = ({ isOpen, setIsOpen }) => {
+    const [genres, setGenres] = useState<Genre[]>([]);
+    const accentColors = ['text-accent-1', 'text-accent-2', 'text-accent-3', 'text-accent-4'];
+
+    useEffect(() => {
+        const fetchGenres = async () => {
+            try {
+                const res = await api.getGenres();
+                setGenres(res.data);
+            } catch (error) {
+                console.error("Failed to fetch genres for sidebar", error);
+            }
+        };
+        fetchGenres();
+    }, []);
+
+
     const NavItem: React.FC<{ to: string, children: React.ReactNode }> = ({ to, children }) => (
         <NavLink to={to} onClick={() => window.innerWidth < 1024 && setIsOpen(false)} className={({isActive}) => `block px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-primary text-background font-bold' : 'hover:bg-gray-700'}`}>
             {children}
@@ -144,12 +160,27 @@ const Sidebar: React.FC<{ isOpen: boolean; setIsOpen: (isOpen: boolean) => void 
                         <CloseIcon className="w-6 h-6" />
                     </button>
                 </div>
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-2 overflow-y-auto">
                     <NavItem to="/">Home</NavItem>
                     <NavItem to="/list">Anime List</NavItem>
                     <NavItem to="/ongoing">Ongoing</NavItem>
-                    <NavItem to="/genres">Genre List</NavItem>
                     <NavItem to="/schedule">Schedule</NavItem>
+                    
+                    <div className="px-4 py-3">
+                         <h3 className="font-bold text-lg text-gray-300">Genre</h3>
+                    </div>
+                     <div className="grid grid-cols-2 gap-x-4 gap-y-1 px-4 text-sm">
+                        {genres.map((genre, index) => (
+                             <Link 
+                                key={genre.mal_id} 
+                                to={`/genre/${genre.mal_id}/${genre.name.toLowerCase()}`}
+                                onClick={() => window.innerWidth < 1024 && setIsOpen(false)}
+                                className={`block py-1 hover:underline ${accentColors[index % accentColors.length]}`}
+                            >
+                                {genre.name}
+                            </Link>
+                        ))}
+                    </div>
                 </nav>
             </aside>
         </>

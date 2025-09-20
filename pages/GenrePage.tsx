@@ -20,7 +20,7 @@ const GenrePage: React.FC = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await api.getAnimeList({ genres: genreId, page: currentPage, limit: 20 });
+                const response = await api.getAnimeList({ genres: genreId, page: currentPage, limit: 24 });
                 setAnimeList(response.data);
                 if (response.pagination) {
                     setPagination(response.pagination);
@@ -53,7 +53,7 @@ const GenrePage: React.FC = () => {
             <h1 className="text-3xl font-bold text-primary mb-8 capitalize">{genreName} Anime</h1>
             {animeList.length > 0 ? (
                 <>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
                         {animeList.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
                     </div>
                     {pagination && (

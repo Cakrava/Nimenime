@@ -36,7 +36,7 @@ const HeroSection: React.FC<{ anime: Anime }> = ({ anime }) => (
 const AnimeGrid: React.FC<{ title: string; animes: Anime[] }> = ({ title, animes }) => (
     <section className="my-12">
         <h2 className="text-2xl font-bold text-primary mb-6">{title}</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
             {animes.map(anime => <AnimeCard key={anime.mal_id} anime={anime} />)}
         </div>
     </section>
@@ -102,9 +102,9 @@ const HomePage: React.FC = () => {
                     topAiringRes,
                     latestCompletedRes,
                 ] = await Promise.all([
-                    api.getTopAnime('bypopularity', 10),
-                    api.getSeasonNow(10),
-                    api.getCompletedAnime(10),
+                    api.getTopAnime('bypopularity', 12),
+                    api.getSeasonNow(12),
+                    api.getCompletedAnime(12),
                     api.getGenres(),
                     api.getTopAnime('favorite', 5),
                     api.getTopAnime('airing', 5),

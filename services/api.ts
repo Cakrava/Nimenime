@@ -36,7 +36,7 @@ export const getUserFavorites = () => apiFetch<ApiResponse<Anime[]>>('/user/favo
 
 // Anime
 export const getTopAnime = (filter: string, limit: number) => apiFetch<ApiResponse<Anime[]>>(`/top/anime?filter=${filter}&limit=${limit}`);
-export const getSeasonNow = (limit: number) => apiFetch<ApiResponse<Anime[]>>(`/seasons/now?limit=${limit}`);
+export const getSeasonNow = (limit: number) => apiFetch<ApiResponse<Anime[]>>(`/seasons/now?limit=${limit}&status=Currently%20Airing`);
 export const getCompletedAnime = (limit: number) => apiFetch<ApiResponse<Anime[]>>(`/anime?status=complete&order_by=score&sort=desc&limit=${limit}`);
 export const getAnimeById = (id: string) => apiFetch<ApiResponse<AnimeFull>>(`/anime/${id}/full`);
 export const getGenres = () => apiFetch<ApiResponse<Genre[]>>('/genres/anime');
@@ -44,5 +44,5 @@ export const getAnimeList = (params: Record<string, string | number>) => {
     const query = new URLSearchParams(params as Record<string, string>).toString();
     return apiFetch<ApiResponse<Anime[]>>(`/anime?${query}`);
 };
-export const getSchedule = (day: string) => apiFetch<ApiResponse<Anime[]>>(`/schedules?filter=${day}`);
+export const getSchedule = (day: string) => apiFetch<ApiResponse<Anime[]>>(`/schedules?filter=${day}&status=Currently%20Airing`);
 export const searchAnime = (query: string, page: number = 1) => getAnimeList({ q: query, page, limit: 20 });
